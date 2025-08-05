@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+      <h1 class="title">Hello World! </h1>
+      <p id="currentTime"></p>
+      <script src="script.js"></script>
+  </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earbuds App Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-container {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 45px;
+            padding: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #1c1c1e;
+            border-radius: 35px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .app-content {
+            padding: 20px;
+            color: white;
+            height: calc(100% - 44px);
+            overflow-y: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .battery-status {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .earbuds-visual {
+            width: 200px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .earbud {
+            width: 40px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50% 50% 60% 60%;
+            margin: 0 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .earbud::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        
+        .battery-percentage {
+            font-size: 24px;
+            font-weight: 500;
+            color: #4CAF50;
+        }
+        
+        .mode-selector {
+            background: #2c2c2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #999;
+        }
+        
+        .mode-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            background: #3a3a3c;
+            border: none;
+            border-radius: 10px;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn.active {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .sound-profiles {
+            background: #2c2c2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #3a3a3c;
+        }
+        
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-name {
+            font-size: 16px;
+        }
+        
+        .profile-icon {
+            width: 30px;
+            height: 30px;
+            background: #007AFF;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .translate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .translate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,122,255,0.3);
+        }
+        
+        .translate-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #007AFF;
+            font-weight: bold;
+        }
+        
+        /* Translation Modal */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            z-index: 100;
+        }
+        
+        .modal-overlay.active {
+            display: block;
+        }
+        
+        .translation-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-height: 80%;
+            background: #2c2c2e;
+            border-radius: 20px;
+            overflow: hidden;
+            display: none;
+            z-index: 101;
+        }
+        
+        .translation-modal.active {
+            display: block;
+        }
+        
+        .modal-header {
+            background: #3a3a3c;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            width: 30px;
+            height: 30px;
+            background: #555;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .modal-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .language-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .lang-btn {
+            flex: 1;
+            padding: 10px;
+            background: #3a3a3c;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn.active {
+            background: #007AFF;
+        }
+        
+        .transcript-container {
+            background: #1c1c1e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .transcript-text {
+            line-height: 1.6;
+            color: #ddd;
+        }
+        
+        .summary-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .summary-btn {
+            flex: 1;
+            padding: 12px;
+            background: #007AFF;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .summary-btn:hover {
+            background: #0051D5;
+        }
+        
+        .summary-container {
+            background: #1c1c1e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .summary-container.active {
+            display: block;
+        }
+        
+        .summary-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #007AFF;
+        }
+        
+        .summary-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .summary-list li {
+            padding: 8px 0;
+            color: #ddd;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .summary-list li::before {
+            content: '•';
+            color: #007AFF;
+            font-size: 20px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .task-checkbox {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>⚡ 🔋 📶</span>
+            </div>
+            
+            <div class="app-content">
+                <div class="header">
+                    <h1>Antar Ear</h1>
+                    <p style="color: #999; font-size: 14px;">Connected</p>
+                </div>
+                
+                <div class="battery-status">
+                    <div class="earbuds-visual">
+                        <div class="earbud"></div>
+                        <div class="earbud"></div>
+                    </div>
+                    <div class="battery-percentage">85%</div>
+                </div>
+                
+                <div class="mode-selector">
+                    <div class="mode-title">Noise Control</div>
+                    <div class="mode-options">
+                        <button class="mode-btn" onclick="selectMode(this)">Off</button>
+                        <button class="mode-btn active" onclick="selectMode(this)">ANC</button>
+                        <button class="mode-btn" onclick="selectMode(this)">Transparency</button>
+                    </div>
+                </div>
+                
+                <div class="sound-profiles">
+                    <div class="mode-title">Sound Profiles</div>
+                    <div class="profile-item" onclick="selectProfile(this)">
+                        <span class="profile-name">Balanced</span>
+                        <div class="profile-icon">⚖️</div>
+                    </div>
+                    <div class="profile-item" onclick="selectProfile(this)">
+                        <span class="profile-name">Bass Boost</span>
+                        <div class="profile-icon">🎵</div>
+                    </div>
+                    <div class="profile-item" onclick="selectProfile(this)">
+                        <span class="profile-name">Treble Enhance</span>
+                        <div class="profile-icon">✨</div>
+                    </div>
+                    <div class="profile-item" onclick="selectProfile(this)">
+                        <span class="profile-name">Podcast</span>
+                        <div class="profile-icon">🎙️</div>
+                    </div>
+                </div>
+                
+                <button class="translate-btn" onclick="openTranslateModal()">
+                    <div class="translate-icon">🌐</div>
+                    <span>Live Translate</span>
+                </button>
+            </div>
+            
+            <!-- Translation Modal -->
+            <div class="modal-overlay" id="modalOverlay">
+                <div class="translation-modal" id="translationModal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Live Translation</h2>
+                        <button class="close-btn" onclick="closeTranslateModal()">×</button>
+                    </div>
+                    <div class="modal-content">
+                    <div class="language-toggle">
+                        <button class="lang-btn active" onclick="toggleLanguage(this, 'original')">Original</button>
+                        <button class="lang-btn" onclick="toggleLanguage(this, 'translated')">Translated</button>
+                    </div>
+                    
+                    <div class="transcript-container" id="originalTranscript">
+                        <p class="transcript-text">
+                            Bonjour et bienvenue à notre présentation d'aujourd'hui. Nous allons discuter de trois points importants: premièrement, l'analyse du marché actuel; deuxièmement, notre stratégie de croissance pour le prochain trimestre; et troisièmement, les nouvelles initiatives que nous prévoyons de lancer. Chaque section sera suivie d'une période de questions.
+                        </p>
+                    </div>
+                    
+                    <div class="transcript-container" id="translatedTranscript" style="display: none;">
+                        <p class="transcript-text">
+                            Welcome everyone to today's quarterly business review. I'm excited to share our progress and outline our strategic direction moving forward. We've seen remarkable growth in our user engagement metrics, with a 34% increase in daily active users compared to last quarter. Our revenue streams have diversified significantly, particularly in the enterprise segment where we've secured three major contracts worth over $2.1 million combined. The product development team has successfully launched our new AI-powered features, which have received overwhelmingly positive feedback from beta testers. Moving into Q4, we're focusing on international expansion, specifically targeting the European and Asian markets where we see tremendous opportunity for growth.
+                        </p>
+                    </div>
+                    
+                    <div class="summary-options">
+                        <button class="summary-btn" onclick="showSummary('points')">Summarize as Points</button>
+                        <button class="summary-btn" onclick="showSummary('tasks')">Convert to Tasks</button>
+                    </div>
+                    
+                    <div class="summary-container" id="pointsSummary">
+                        <h3 class="summary-title">Key Points</h3>
+                        <ul class="summary-list">
+                            <li>34% increase in daily active users this quarter</li>
+                            <li>$2.1 million in new enterprise contracts secured</li>
+                            <li>AI-powered features launched with positive beta feedback</li>
+                            <li>Q4 focus on European and Asian market expansion</li>
+                            <li>Revenue diversification in enterprise segment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="summary-container" id="tasksSummary">
+                        <h3 class="summary-title">Action Items</h3>
+                        <ul class="summary-list" style="list-style: none;">
+                            <li><input type="checkbox" class="task-checkbox"> Follow up on enterprise contract implementations</li>
+                            <li><input type="checkbox" class="task-checkbox"> Schedule European market research calls</li>
+                            <li><input type="checkbox" class="task-checkbox"> Review AI feature performance metrics</li>
+                            <li><input type="checkbox" class="task-checkbox"> Prepare Q4 international expansion budget</li>
+                            <li><input type="checkbox" class="task-checkbox"> Analyze user engagement data trends</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectMode(btn) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        
+        function selectProfile(item) {
+            document.querySelectorAll('.profile-item').forEach(p => p.style.background = 'transparent');
+            item.style.background = '#3a3a3c';
+            item.style.borderRadius = '10px';
+        }
+        
+        function openTranslateModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('translationModal').classList.add('active');
+        }
+        
+        function closeTranslateModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('translationModal').classList.remove('active');
+            // Reset summaries
+            document.getElementById('pointsSummary').classList.remove('active');
+            document.getElementById('tasksSummary').classList.remove('active');
+        }
+        
+        // Close modal only when clicking on the overlay background, not the modal content
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('modalOverlay');
+            
+            overlay.addEventListener('click', function(e) {
+                // Only close if clicking directly on the overlay (gray background), not inside the modal
+                if (e.target === overlay) {
+                    closeTranslateModal();
+                }
+            });
+        });
+        
+        function toggleLanguage(btn, type) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const originalTranscript = document.getElementById('originalTranscript');
+            const translatedTranscript = document.getElementById('translatedTranscript');
+            
+            if (type === 'original') {
+                originalTranscript.style.display = 'block';
+                translatedTranscript.style.display = 'none';
+            } else if (type === 'translated') {
+                originalTranscript.style.display = 'none';
+                translatedTranscript.style.display = 'block';
+            }
+            
+            // Hide summaries when switching languages
+            document.getElementById('pointsSummary').classList.remove('active');
+            document.getElementById('tasksSummary').classList.remove('active');
+        }
+        
+        function showSummary(type) {
+            document.getElementById('pointsSummary').classList.remove('active');
+            document.getElementById('tasksSummary').classList.remove('active');
+            
+            if (type === 'points') {
+                document.getElementById('pointsSummary').classList.add('active');
+            } else {
+                document.getElementById('tasksSummary').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
